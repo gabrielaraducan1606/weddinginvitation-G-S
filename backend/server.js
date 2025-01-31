@@ -42,35 +42,45 @@ const transporter = nodemailer.createTransport({
 // Endpoint pentru salvarea invitațiilor și trimiterea e-mailului
 app.post("/api/confirmare", async (req, res) => {
     try {
-        console.log("📩 Request primit:", req.body); // Verifică ce date vin din frontend
+        console.log("📩 Request primit:", req.body); // Log pentru debugging
 
-        let { nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii } = req.body;
+        let {
+            fullName,
+            phoneNumber,
+            numberOfGuests,
+            guestNames,
+            numberOfChildren,
+            foodPreference,
+            otherPreferences,
+            accommodation,
+            comments
+        } = req.body;
 
-        console.log("🛠️ Înainte de verificare:", { nume_invitati }); // DEBUGGING
+        console.log("🛠️ Înainte de verificare:", { guestNames });
 
-        // Asigură-te că `nume_invitati` este corect
-        if (!Array.isArray(nume_invitati) || nume_invitati.length === 0) {
-            nume_invitati = ["Nespecificat"];
+        // Verificăm și curățăm `guestNames`
+        if (!Array.isArray(guestNames) || guestNames.length === 0) {
+            guestNames = ["Nespecificat"];
         } else {
-            nume_invitati = nume_invitati.filter(name => name.trim() !== ""); // Elimină numele goale
+            guestNames = guestNames.filter(name => name.trim() !== ""); // Elimină numele goale
         }
 
-        console.log("✅ După verificare:", { nume_invitati }); // DEBUGGING
+        console.log("✅ După verificare:", { guestNames });
 
         // Salvare în MongoDB
         const newInvite = new Invite({
-            nume: nume || "Anonim",
-            telefon: telefon || "N/A",
-            numar_persoane: numar_persoane || 1,
-            nume_invitati,
-            numar_copii: numar_copii || 0,
-            cazare: cazare || "Nu",
-            preferinte: preferinte || "N/A",
-            comentarii: comentarii || "Fără comentarii",
+            nume: fullName || "Anonim",
+            telefon: phoneNumber || "N/A",
+            numar_persoane: numberOfGuests || 1,
+            nume_invitati: guestNames,
+            numar_copii: numberOfChildren || 0,
+            cazare: accommodation ? "Da" : "Nu",
+            preferinte: foodPreference || "N/A",
+            comentarii: comments || "Fără comentarii",
         });
 
         await newInvite.save();
-        console.log("✅ Invitație salvată în MongoDB:", newInvite); // DEBUGGING
+        console.log("✅ Invitație salvată în MongoDB:", newInvite);
 
         res.json({ success: true, message: "Datele au fost salvate și trimise cu succes!" });
 
@@ -79,6 +89,7 @@ app.post("/api/confirmare", async (req, res) => {
         res.status(500).json({ error: "Eroare la salvarea datelor." });
     }
 });
+
 
 
 // Pornirea serverului
