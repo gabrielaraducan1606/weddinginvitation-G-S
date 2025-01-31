@@ -15,14 +15,14 @@ app.use(bodyParser.json());
 // Conectare la MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("✅ Conectat la MongoDB"))
-    .catch(err => console.error("❌ Eroare la conectare MongoDB:", err));
+    .catch(err => console.error("❌ Eroare la conectare:", err));
 
 // Definirea modelului de invitație
 const inviteSchema = new mongoose.Schema({
     nume: String,
     telefon: String,
     numar_persoane: Number,
-    nume_invitati: { type: [String], default: [] }, // Setăm default ca array gol
+    nume_invitati: [String],
     numar_copii: Number,
     cazare: String,
     preferinte: String,
@@ -42,31 +42,11 @@ const transporter = nodemailer.createTransport({
 // Endpoint pentru salvarea invitațiilor și trimiterea e-mailului
 app.post("/api/confirmare", async (req, res) => {
     try {
-        console.log("📩 Request primit:", req.body); // Debugging log
-
-        let { nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii } = req.body;
-
-        // Verificăm dacă `nume_invitati` este definit și conține date valide
-        if (!Array.isArray(nume_invitati)) {
-            nume_invitati = []; // Setăm un array gol pentru a evita erorile
-        } else {
-            nume_invitati = nume_invitati.filter(nume => nume && nume.trim() !== ""); // Eliminăm valorile goale
-        }
+        const { nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii } = req.body;
 
         // Salvare în MongoDB
-        const newInvite = new Invite({
-            nume: nume || "Anonim",
-            telefon: telefon || "N/A",
-            numar_persoane: numar_persoane || 1,
-            nume_invitati,
-            numar_copii: numar_copii || 0,
-            cazare: cazare || "Nu",
-            preferinte: preferinte || "N/A",
-            comentarii: comentarii || "Fără comentarii",
-        });
-
+        const newInvite = new Invite({ nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii });
         await newInvite.save();
-        console.log("✅ Invitație salvată în MongoDB!");
 
         // Trimitere e-mail
         const mailOptions = {
@@ -74,14 +54,14 @@ app.post("/api/confirmare", async (req, res) => {
             to: process.env.EMAIL_TO,
             subject: "Confirmare invitație nuntă",
             text: `
-Nume complet: ${nume || "Anonim"}
-Telefon: ${telefon || "N/A"}
-Număr persoane: ${numar_persoane || 1}
-Nume invitați: ${nume_invitati.length > 0 ? nume_invitati.join(", ") : "Nespecificat"}
-Număr copii: ${numar_copii || 0}
+Nume complet: ${nume}
+Telefon: ${telefon}
+Număr persoane: ${numar_persoane}
+Nume invitați: ${nume_invitati.join(", ")}
+Număr copii: ${numar_copii}
 Cazare: ${cazare ? "Da" : "Nu"}
-Preferințe culinare: ${preferinte || "N/A"}
-Comentarii: ${comentarii || "Fără comentarii"}
+Preferințe culinare: ${preferinte}
+Comentarii: ${comentarii || "N/A"}
             `,
         };
 
@@ -91,13 +71,14 @@ Comentarii: ${comentarii || "Fără comentarii"}
         res.json({ success: true, message: "Datele au fost salvate și trimise cu succes!" });
 
     } catch (error) {
-        console.error("❌ Eroare la salvarea datelor sau trimiterea e-mailului:", error);
-        res.status(500).json({ error: "Eroare la salvarea datelor sau trimiterea e-mailului.", details: error.message });
+        console.error("❌ Eroare:", error);
+        res.status(500).json({ error: "Eroare la salvarea datelor sau trimiterea e-mailului." });
     }
 });
-
 
 // Pornirea serverului
 app.listen(PORT, () => {
     console.log(`🚀 Serverul rulează pe http://localhost:${PORT}`);
 });
+
+require("dotenv").config();
