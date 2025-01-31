@@ -42,11 +42,31 @@ const transporter = nodemailer.createTransport({
 // Endpoint pentru salvarea invitațiilor și trimiterea e-mailului
 app.post("/api/confirmare", async (req, res) => {
     try {
-        const { nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii } = req.body;
+        console.log("📩 Request primit:", req.body); // Log pentru debugging
+
+        let { nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii } = req.body;
+
+        // Verificăm și curățăm `nume_invitati`
+        if (!Array.isArray(nume_invitati) || nume_invitati.length === 0) {
+            nume_invitati = ["Nespecificat"]; // Default dacă lista e goală sau undefined
+        } else {
+            nume_invitati = nume_invitati.filter(name => name.trim() !== ""); // Elimină valorile goale
+        }
 
         // Salvare în MongoDB
-        const newInvite = new Invite({ nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii });
+        const newInvite = new Invite({
+            nume: nume || "Anonim",
+            telefon: telefon || "N/A",
+            numar_persoane: numar_persoane || 1,
+            nume_invitati,
+            numar_copii: numar_copii || 0,
+            cazare: cazare || "Nu",
+            preferinte: preferinte || "N/A",
+            comentarii: comentarii || "Fără comentarii",
+        });
+
         await newInvite.save();
+        console.log("✅ Invitație salvată în MongoDB!");
 
         // Trimitere e-mail
         const mailOptions = {
@@ -54,14 +74,14 @@ app.post("/api/confirmare", async (req, res) => {
             to: process.env.EMAIL_TO,
             subject: "Confirmare invitație nuntă",
             text: `
-Nume complet: ${nume}
-Telefon: ${telefon}
-Număr persoane: ${numar_persoane}
-Nume invitați: ${nume_invitati.join(", ")}
-Număr copii: ${numar_copii}
+Nume complet: ${nume || "Anonim"}
+Telefon: ${telefon || "N/A"}
+Număr persoane: ${numar_persoane || 1}
+Nume invitați: ${nume_invitati.length > 0 ? nume_invitati.join(", ") : "Nespecificat"}
+Număr copii: ${numar_copii || 0}
 Cazare: ${cazare ? "Da" : "Nu"}
-Preferințe culinare: ${preferinte}
-Comentarii: ${comentarii || "N/A"}
+Preferințe culinare: ${preferinte || "N/A"}
+Comentarii: ${comentarii || "Fără comentarii"}
             `,
         };
 
@@ -71,10 +91,11 @@ Comentarii: ${comentarii || "N/A"}
         res.json({ success: true, message: "Datele au fost salvate și trimise cu succes!" });
 
     } catch (error) {
-        console.error("❌ Eroare:", error);
-        res.status(500).json({ error: "Eroare la salvarea datelor sau trimiterea e-mailului." });
+        console.error("❌ Eroare la salvarea datelor sau trimiterea e-mailului:", error);
+        res.status(500).json({ error: "Eroare la salvarea datelor sau trimiterea e-mailului.", details: error.message });
     }
 });
+
 
 // Pornirea serverului
 app.listen(PORT, () => {
