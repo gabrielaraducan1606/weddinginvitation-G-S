@@ -46,13 +46,26 @@ app.post("/api/confirmare", async (req, res) => {
 
         let { nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii } = req.body;
 
-        // Verificăm dacă `nume_invitati` este definit și este un array
-        if (!Array.isArray(nume_invitati)) {
-            nume_invitati = []; // Dacă este undefined sau nu e array, îl facem array gol
+        // Verificăm dacă `nume_invitati` este definit și conține date valide
+        if (!Array.isArray(nume_invitati) || nume_invitati.length === 0) {
+            nume_invitati = ["Nespecificat"]; // Dacă nu există, setăm un default
         }
 
+        // Eliminăm elementele goale din array
+        nume_invitati = nume_invitati.filter(nume => nume.trim() !== "");
+
         // Salvare în MongoDB
-        const newInvite = new Invite({ nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii });
+        const newInvite = new Invite({
+            nume: nume || "Anonim",
+            telefon: telefon || "N/A",
+            numar_persoane: numar_persoane || 1,
+            nume_invitati,
+            numar_copii: numar_copii || 0,
+            cazare: cazare || "Nu",
+            preferinte: preferinte || "N/A",
+            comentarii: comentarii || "Fără comentarii",
+        });
+
         await newInvite.save();
         console.log("✅ Invitație salvată în MongoDB!");
 
@@ -62,14 +75,14 @@ app.post("/api/confirmare", async (req, res) => {
             to: process.env.EMAIL_TO,
             subject: "Confirmare invitație nuntă",
             text: `
-Nume complet: ${nume}
-Telefon: ${telefon}
-Număr persoane: ${numar_persoane}
-Nume invitați: ${nume_invitati.length ? nume_invitati.join(", ") : "N/A"}
-Număr copii: ${numar_copii}
+Nume complet: ${nume || "Anonim"}
+Telefon: ${telefon || "N/A"}
+Număr persoane: ${numar_persoane || 1}
+Nume invitați: ${nume_invitati.length > 0 ? nume_invitati.join(", ") : "Nespecificat"}
+Număr copii: ${numar_copii || 0}
 Cazare: ${cazare ? "Da" : "Nu"}
-Preferințe culinare: ${preferinte}
-Comentarii: ${comentarii || "N/A"}
+Preferințe culinare: ${preferinte || "N/A"}
+Comentarii: ${comentarii || "Fără comentarii"}
             `,
         };
 
