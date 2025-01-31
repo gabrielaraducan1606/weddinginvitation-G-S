@@ -42,16 +42,20 @@ const transporter = nodemailer.createTransport({
 // Endpoint pentru salvarea invitațiilor și trimiterea e-mailului
 app.post("/api/confirmare", async (req, res) => {
     try {
-        console.log("📩 Request primit:", req.body); // Log pentru debugging
+        console.log("📩 Request primit:", req.body); // Verifică ce date vin din frontend
 
         let { nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii } = req.body;
 
-        // Verificăm și curățăm `nume_invitati`
+        console.log("🛠️ Înainte de verificare:", { nume_invitati }); // DEBUGGING
+
+        // Asigură-te că `nume_invitati` este corect
         if (!Array.isArray(nume_invitati) || nume_invitati.length === 0) {
-            nume_invitati = ["Nespecificat"]; // Default dacă lista e goală sau undefined
+            nume_invitati = ["Nespecificat"];
         } else {
-            nume_invitati = nume_invitati.filter(name => name.trim() !== ""); // Elimină valorile goale
+            nume_invitati = nume_invitati.filter(name => name.trim() !== ""); // Elimină numele goale
         }
+
+        console.log("✅ După verificare:", { nume_invitati }); // DEBUGGING
 
         // Salvare în MongoDB
         const newInvite = new Invite({
@@ -66,33 +70,13 @@ app.post("/api/confirmare", async (req, res) => {
         });
 
         await newInvite.save();
-        console.log("✅ Invitație salvată în MongoDB!");
-
-        // Trimitere e-mail
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: process.env.EMAIL_TO,
-            subject: "Confirmare invitație nuntă",
-            text: `
-Nume complet: ${nume || "Anonim"}
-Telefon: ${telefon || "N/A"}
-Număr persoane: ${numar_persoane || 1}
-Nume invitați: ${nume_invitati.length > 0 ? nume_invitati.join(", ") : "Nespecificat"}
-Număr copii: ${numar_copii || 0}
-Cazare: ${cazare ? "Da" : "Nu"}
-Preferințe culinare: ${preferinte || "N/A"}
-Comentarii: ${comentarii || "Fără comentarii"}
-            `,
-        };
-
-        await transporter.sendMail(mailOptions);
-        console.log("📧 E-mail trimis cu succes!");
+        console.log("✅ Invitație salvată în MongoDB:", newInvite); // DEBUGGING
 
         res.json({ success: true, message: "Datele au fost salvate și trimise cu succes!" });
 
     } catch (error) {
-        console.error("❌ Eroare la salvarea datelor sau trimiterea e-mailului:", error);
-        res.status(500).json({ error: "Eroare la salvarea datelor sau trimiterea e-mailului.", details: error.message });
+        console.error("❌ Eroare la salvarea datelor:", error);
+        res.status(500).json({ error: "Eroare la salvarea datelor." });
     }
 });
 
