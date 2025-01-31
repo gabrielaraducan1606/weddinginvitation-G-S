@@ -1,0 +1,21 @@
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: black;
+  color: white;
+  background-color: #f4f4f4; 
+}
+h1, h2, h3 {
+  text-align: center;
+}
+form {
+  max-width: 400px;
+  margin: auto;
+}
+a {
+  color: #61dafb;
+}
+html {
+  scroll-behavior: smooth;
+}

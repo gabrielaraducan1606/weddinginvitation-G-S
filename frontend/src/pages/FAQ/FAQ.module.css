@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=EB+Garamond:wght@400..800&display=swap');
+
+.faqContainer {
+  background: linear-gradient(180deg, white 0%, #E9967A 100%);
+  color:  #E9967A;
+  padding: 60px 20px;
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.faqTitle {
+  font-size: 3rem;
+  font-family: "Dancing Script", serif;
+  margin-bottom: 30px;
+  color:  #E9967A;
+}
+
+.faqList {
+  max-width: 800px;
+  width: 100%;
+}
+
+.faqItem {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease-in-out;
+}
+
+.faqQuestion {
+  width: 100%;
+  background: none;
+  border: none;
+  color:  white;
+  text-align: left;
+  font-size: 1.2rem;
+  font-weight: bold;
+  font-family: "EB Garamond", serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.faqAnswer {
+  font-size: 1rem;
+  padding: 10px;
+  color: white;
+  font-family: "EB Garamond", serif;
+  transition: all 0.3s ease-in-out;
+}
+
+.icon {
+  color: #E9967A;
+  transition: transform 0.3s ease-in-out;
+}
+
+.faqItem:hover {
+  transform: scale(1.02);
+}
+
+.footerPage{
+  font-family: "Dancing Script", serif;
+  color: white;
+  font-size: 20px;
+}
+@media (max-width: 768px) {
+  .faqTitle {
+    font-size: 2.5rem;
+  }
+
+  .faqQuestion {
+    font-size: 1rem;
+  }
+}
