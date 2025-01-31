@@ -47,12 +47,11 @@ app.post("/api/confirmare", async (req, res) => {
         let { nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii } = req.body;
 
         // Verificăm dacă `nume_invitati` este definit și conține date valide
-        if (!Array.isArray(nume_invitati) || nume_invitati.length === 0) {
-            nume_invitati = ["Nespecificat"]; // Dacă nu există, setăm un default
+        if (!Array.isArray(nume_invitati)) {
+            nume_invitati = []; // Setăm un array gol pentru a evita erorile
+        } else {
+            nume_invitati = nume_invitati.filter(nume => nume && nume.trim() !== ""); // Eliminăm valorile goale
         }
-
-        // Eliminăm elementele goale din array
-        nume_invitati = nume_invitati.filter(nume => nume.trim() !== "");
 
         // Salvare în MongoDB
         const newInvite = new Invite({
@@ -92,10 +91,11 @@ Comentarii: ${comentarii || "Fără comentarii"}
         res.json({ success: true, message: "Datele au fost salvate și trimise cu succes!" });
 
     } catch (error) {
-        console.error("❌ Eroare:", error);
+        console.error("❌ Eroare la salvarea datelor sau trimiterea e-mailului:", error);
         res.status(500).json({ error: "Eroare la salvarea datelor sau trimiterea e-mailului.", details: error.message });
     }
 });
+
 
 // Pornirea serverului
 app.listen(PORT, () => {
