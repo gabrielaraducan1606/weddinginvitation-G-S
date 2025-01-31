@@ -15,14 +15,14 @@ app.use(bodyParser.json());
 // Conectare la MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("✅ Conectat la MongoDB"))
-    .catch(err => console.error("❌ Eroare la conectare:", err));
+    .catch(err => console.error("❌ Eroare la conectare MongoDB:", err));
 
 // Definirea modelului de invitație
 const inviteSchema = new mongoose.Schema({
     nume: String,
     telefon: String,
     numar_persoane: Number,
-    nume_invitati: [String],
+    nume_invitati: { type: [String], default: [] }, // Setăm default ca array gol
     numar_copii: Number,
     cazare: String,
     preferinte: String,
@@ -42,11 +42,19 @@ const transporter = nodemailer.createTransport({
 // Endpoint pentru salvarea invitațiilor și trimiterea e-mailului
 app.post("/api/confirmare", async (req, res) => {
     try {
-        const { nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii } = req.body;
+        console.log("📩 Request primit:", req.body); // Debugging log
+
+        let { nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii } = req.body;
+
+        // Verificăm dacă `nume_invitati` este definit și este un array
+        if (!Array.isArray(nume_invitati)) {
+            nume_invitati = []; // Dacă este undefined sau nu e array, îl facem array gol
+        }
 
         // Salvare în MongoDB
         const newInvite = new Invite({ nume, telefon, numar_persoane, nume_invitati, numar_copii, cazare, preferinte, comentarii });
         await newInvite.save();
+        console.log("✅ Invitație salvată în MongoDB!");
 
         // Trimitere e-mail
         const mailOptions = {
@@ -57,7 +65,7 @@ app.post("/api/confirmare", async (req, res) => {
 Nume complet: ${nume}
 Telefon: ${telefon}
 Număr persoane: ${numar_persoane}
-Nume invitați: ${nume_invitati.join(", ")}
+Nume invitați: ${nume_invitati.length ? nume_invitati.join(", ") : "N/A"}
 Număr copii: ${numar_copii}
 Cazare: ${cazare ? "Da" : "Nu"}
 Preferințe culinare: ${preferinte}
@@ -72,7 +80,7 @@ Comentarii: ${comentarii || "N/A"}
 
     } catch (error) {
         console.error("❌ Eroare:", error);
-        res.status(500).json({ error: "Eroare la salvarea datelor sau trimiterea e-mailului." });
+        res.status(500).json({ error: "Eroare la salvarea datelor sau trimiterea e-mailului.", details: error.message });
     }
 });
 
@@ -80,5 +88,3 @@ Comentarii: ${comentarii || "N/A"}
 app.listen(PORT, () => {
     console.log(`🚀 Serverul rulează pe http://localhost:${PORT}`);
 });
-
-require("dotenv").config();
