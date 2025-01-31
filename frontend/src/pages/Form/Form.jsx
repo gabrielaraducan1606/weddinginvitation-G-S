@@ -46,10 +46,10 @@ const Form = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         // Eliminăm numele goale înainte de trimitere
         const cleanedGuestNames = formData.guestNames.filter(name => name.trim() !== "");
-
+    
         const dataToSend = {
             nume: formData.fullName,
             telefon: formData.phoneNumber,
@@ -60,9 +60,9 @@ const Form = () => {
             preferinte: formData.foodPreference,
             comentarii: formData.comments,
         };
-
-        console.log("🔍 Date trimise către backend:", dataToSend);
-
+    
+        console.log("🔍 Date trimise către backend:", dataToSend); // DEBUGGING
+    
         try {
             const response = await fetch(`${API_URL}/api/confirmare`, {
                 method: "POST",
@@ -71,11 +71,11 @@ const Form = () => {
                 },
                 body: JSON.stringify(dataToSend),
             });
-
+    
             if (!response.ok) {
                 throw new Error(`Server error: ${response.status}`);
             }
-
+    
             const result = await response.json();
             console.log("✅ Răspuns backend:", result);
             alert(result.message || "Invitația a fost înregistrată cu succes!");
@@ -84,6 +84,7 @@ const Form = () => {
             alert("A apărut o problemă la trimiterea formularului.");
         }
     };
+    
 
     return (
         <div id="form" className={styles.formContainer}>
