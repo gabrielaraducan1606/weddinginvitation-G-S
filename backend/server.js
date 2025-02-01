@@ -13,10 +13,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Conectare la MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("✅ Conectat la MongoDB"))
     .catch(err => console.error("❌ Eroare la conectare:", err));
 
@@ -37,11 +34,16 @@ const Invite = mongoose.model("Invite", inviteSchema);
 
 // 📌 Configurare Nodemailer
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.mail.com",   // Serverul SMTP pentru mail.com
+    port: 587,               // Portul standard pentru conexiuni TLS
+    secure: false,           // Folosește TLS, dar nu SSL
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
+    tls: {
+        rejectUnauthorized: false  // Permite certificatele auto-semnat pentru mail.com
+    }
 });
 
 // 📌 Endpoint pentru salvarea invitațiilor și trimiterea email-ului
