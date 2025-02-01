@@ -116,57 +116,63 @@ h2 {
 
 /* Loader cu inima în pulsatie */
 .loader {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
   background-color: #ffe6e6;
-  color: #d6336c;
+  color: #E9967A;
   font-family: "EB Garamond", serif;
   font-size: 1.5rem;
 }
 
+/* Inima - versiune mai mică și poziționată la dreapta */
 .heart {
-  width: 100px;
-  height: 100px;
-  background-color: #d6336c;
-  position: relative;
-  transform: rotate(45deg);
+  width: 50px;             /* Dimensiune redusă */
+  height: 50px;
+  background-color: #E9967A;
+  position: absolute;
+  right: 20px;             /* Poziționare la dreapta a containerului loader */
+  top: 50%;                /* Centrat vertical */
+  transform: translateY(-50%) rotate(45deg);  /* Centrare verticală și rotire */
   animation: pulse 1s infinite;
 }
 
 .heart::before,
 .heart::after {
   content: "";
-  width: 100px;
-  height: 100px;
-  background-color: #d6336c;
+  width: 50px;             /* Menținem aceeași lățime pentru a păstra proporțiile */
+  height: 50px;
+  background-color:  #E9967A;
   border-radius: 50%;
   position: absolute;
 }
 
 .heart::before {
-  top: -50px;
+  top: -25px;              /* Ajustăm în funcție de noua dimensiune */
   left: 0;
 }
 
 .heart::after {
-  left: 50px;
+  left: 25px;              /* Jumătate din lățimea inimii */
   top: 0;
 }
 
+/* Animatia pulse rămâne aceeași */
 @keyframes pulse {
   0% {
-    transform: scale(1) rotate(45deg);
+    transform: translateY(-50%) scale(1) rotate(45deg);
   }
   50% {
-    transform: scale(1.2) rotate(45deg);
+    transform: translateY(-50%) scale(1.2) rotate(45deg);
   }
   100% {
-    transform: scale(1) rotate(45deg);
+    transform: translateY(-50%) scale(1) rotate(45deg);
   }
 }
+
 
 /* Responsivitate pentru ecrane mici */
 @media (max-width: 600px) {
@@ -239,8 +245,10 @@ h2 {
   }
 
   .heart {
-    width: 30px;
+    width: 30px;            /* Inima devine mai mică */
     height: 30px;
+    right: 50px;            /* Poziționare la dreapta ajustată pentru ecrane mici */
+    transform: translateY(-50%) rotate(45deg);  /* Păstrăm transformarea pentru centrare verticală și rotire */
   }
 
   .heart::before,
