@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=EB+Garamond:wght@400..800&display=swap');
 
 .faqContainer {
-  background: linear-gradient(180deg, white 0%, #E9967A 100%);
-  color:  #E9967A;
+  background-color: #E9967A;
+  color:  white;
   padding: 60px 20px;
   text-align: center;
   min-height: 100vh;
@@ -15,7 +15,7 @@
   font-size: 3rem;
   font-family: "Dancing Script", serif;
   margin-bottom: 30px;
-  color:  #E9967A;
+  color:  white;
 }
 
 .faqList {

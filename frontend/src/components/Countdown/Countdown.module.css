@@ -1,5 +1,174 @@
 @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Playwrite+IN:wght@100..400&display=swap');
+
+/* Containerul formularului */
+.formContainer {
+  max-width: 500px;
+  margin: 3rem auto;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: #333;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* Titlul formularului */
+h2 {
+  font-family: "Dancing Script", serif;
+  font-size: 2.5rem;
+  color: #E9967A;
+  margin-bottom: 1rem;
+}
+
+/* Stilizarea câmpurilor */
+.formLabel {
+  display: block;
+  font-family: "EB Garamond", serif;
+  font-size: 1.2rem;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #E9967A;
+}
+
+.formInput,
+.formSelect,
+.formTextarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid #E9967A;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #f4f4f4;
+  color: #2F3E46;
+  font-family: "EB Garamond", serif;
+  box-sizing: border-box;
+}
+
+.formInput::placeholder,
+.formTextarea::placeholder {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* Checkbox și container */
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #E9967A;
+  font-family: "EB Garamond", serif;
+  margin-bottom: 1rem;
+}
+
+.formCheckbox {
+  display: none;
+}
+
+.checkboxCustom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #E9967A;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.formCheckbox:checked + .checkboxCustom {
+  background-color: #E9967A;
+  border-color: #E9967A;
+}
+
+.formCheckbox:checked + .checkboxCustom::after {
+  content: "\2713"; /* Bifa */
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Butonul de trimitere */
+.submitButton {
+  width: 100%;
+  padding: 12px;
+  font-size: 1.2rem;
+  font-family: "EB Garamond", serif;
+  background: #E9967A;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.submitButton:hover {
+  background: #2F3E46;
+  color: white;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Loader cu inima în pulsatie */
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #ffe6e6;
+  color: #d6336c;
+  font-family: "EB Garamond", serif;
+  font-size: 1.5rem;
+}
+
+.heart {
+  width: 100px;
+  height: 100px;
+  background-color: #d6336c;
+  position: relative;
+  transform: rotate(45deg);
+  animation: pulse 1s infinite;
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  width: 100px;
+  height: 100px;
+  background-color: #d6336c;
+  border-radius: 50%;
+  position: absolute;
+}
+
+.heart::before {
+  top: -50px;
+  left: 0;
+}
+
+.heart::after {
+  left: 50px;
+  top: 0;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1) rotate(45deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(45deg);
+  }
+  100% {
+    transform: scale(1) rotate(45deg);
+  }
+}
+
+/* Containerul paginii principale */
 .pageContainer {
   position: relative;
   width: 100%;
@@ -12,7 +181,9 @@
   font-size: 2rem;
   font-weight: bold;
   overflow: hidden;
-  background: linear-gradient(180deg, #E9967A 0%, #5D4037 100%);}
+  background: linear-gradient(180deg, #E9967A 0%, #5D4037 100%);
+  box-sizing: border-box;
+}
 
 .backgroundBlur {
   position: absolute;
@@ -36,7 +207,7 @@
   font-size: 3rem;
   font-family: "Dancing Script", serif;
   margin-bottom: 10px;
-  color:  #E9967A; /* Galben auriu elegant */
+  color: #E9967A;
 }
 
 .countdownTimer {
@@ -48,6 +219,7 @@
   position: relative;
   z-index: 2;
   margin-top: 1rem;
+  flex-wrap: wrap;
 }
 
 .timeBox {
@@ -60,6 +232,7 @@
   border-radius: 10px;
   width: 90px;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .timeNumber {
@@ -73,4 +246,132 @@
   font-weight: 500;
   color: white;
   text-transform: uppercase;
+}
+
+/* Responsivitate pentru ecrane mici */
+@media (max-width: 600px) {
+  .formContainer {
+    width: 90%;
+    padding: 1.5rem;
+    margin: 2rem auto;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  .formLabel {
+    font-size: 1rem;
+  }
+
+  .formInput,
+  .formSelect,
+  .formTextarea {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  .submitButton {
+    padding: 10px;
+    font-size: 1rem;
+  }
+
+  .loader {
+    font-size: 1.2rem;
+  }
+
+  .heart {
+    width: 80px;
+    height: 80px;
+  }
+
+  .heart::before,
+  .heart::after {
+    width: 80px;
+    height: 80px;
+  }
+
+  .pageContainer {
+    padding: 20px;
+  }
+
+  .countdownTitle {
+    font-size: 2.5rem;
+  }
+
+  .countdownTimer {
+    gap: 15px;
+  }
+
+  .timeBox {
+    width: 70px;
+    padding: 10px;
+  }
+
+  .timeNumber {
+    font-size: 2.5rem;
+  }
+
+  .timeLabel {
+    font-size: 1rem;
+  }
+}
+
+/* Responsivitate pentru ecrane foarte mici (sub 400px) */
+@media (max-width: 400px) {
+  .formContainer {
+    padding: 1rem;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  .formInput,
+  .formSelect,
+  .formTextarea {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .submitButton {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+
+  .loader {
+    font-size: 1rem;
+  }
+
+  .heart {
+    width: 60px;
+    height: 60px;
+  }
+
+  .heart::before,
+  .heart::after {
+    width: 60px;
+    height: 60px;
+  }
+
+  .countdownTitle {
+    font-size: 2rem;
+  }
+
+  .countdownTimer {
+    gap: 10px;
+  }
+
+  .timeBox {
+    width: 60px;
+    padding: 8px;
+  }
+
+  .timeNumber {
+    font-size: 2rem;
+  }
+
+  .timeLabel {
+    font-size: 0.85rem;
+  }
 }
