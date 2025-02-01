@@ -25,18 +25,14 @@ const inviteSchema = new mongoose.Schema({
     nume: { type: String, required: true },
     telefon: { type: String, required: true },
     numar_persoane: { type: Number, required: true },
-    nume_invitati: { 
-        type: [String], 
-        default: [],
-        required: true // 🔴 Forțează salvarea array-ului
-    },
+    nume_invitati: { type: [String], required: true, default: [] },  // Forțăm array-ul ca required și default gol
     numar_copii: { type: Number, required: true },
     cazare: { type: String, required: true },
     preferinte: { type: String, required: true },
     comentarii: { type: String, required: true }
 });
 
-const Invite = mongoose.model("Invite", inviteSchema);
+mongoose.model("Invite", inviteSchema);  // 🔴 Asigură-te că modelul este recreat complet
 
 // 📌 Configurare Nodemailer
 const transporter = nodemailer.createTransport({
