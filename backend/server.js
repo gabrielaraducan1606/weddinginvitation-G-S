@@ -22,7 +22,11 @@ const inviteSchema = new mongoose.Schema({
     nume: { type: String, required: true },
     telefon: { type: String, required: true },
     numar_persoane: { type: Number, required: true },
-    nume_invitati: { type: [String], default: [] },  // Corect: definim explicit ca array de stringuri
+    nume_invitati: { 
+        type: [String], 
+        default: [],
+        required: true // 🔴 Forțează salvarea array-ului
+    },
     numar_copii: { type: Number, required: true },
     cazare: { type: String, required: true },
     preferinte: { type: String, required: true },
@@ -73,12 +77,13 @@ app.post("/api/confirmare", async (req, res) => {
             nume: fullName || "Anonim",
             telefon: phoneNumber || "N/A",
             numar_persoane: numberOfGuests || 1,
-            nume_invitati: guestNames,
+            nume_invitati: Array.isArray(guestNames) ? guestNames : [], // 🔴 Forțează salvarea ca array
             numar_copii: numberOfChildren || 0,
             cazare: accommodation ? "Da" : "Nu",
             preferinte: foodPreference || "N/A",
             comentarii: comments || "Fără comentarii",
         });
+        
 
         await newInvite.save();
         console.log("✅ Invitație salvată în MongoDB:", newInvite);
