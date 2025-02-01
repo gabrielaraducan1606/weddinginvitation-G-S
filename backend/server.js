@@ -25,25 +25,26 @@ const inviteSchema = new mongoose.Schema({
     nume: { type: String, required: true },
     telefon: { type: String, required: true },
     numar_persoane: { type: Number, required: true },
-    nume_invitati: { type: [String], required: true, default: [] },  // Forțăm array-ul ca required și default gol
+    nume_invitati: { type: [String], required: true, default: [] },
     numar_copii: { type: Number, required: true },
     cazare: { type: String, required: true },
     preferinte: { type: String, required: true },
     comentarii: { type: String, required: true }
 });
 
-mongoose.model("Invite", inviteSchema);  // 🔴 Asigură-te că modelul este recreat complet
+// 🔴 Asigură-te că modelul `Invite` este corect definit
+const Invite = mongoose.model("Invite", inviteSchema);
 
 // 📌 Configurare Nodemailer
 const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-        user: process.env.EMAIL_USER,  // Emailul tău (ex. numele@gmail.com)
-        pass: process.env.EMAIL_PASS   // Parola generată din Gmail App Passwords
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
     },
 });
 
-// 📌 Endpoint corect pentru salvarea invitațiilor și trimiterea e-mailului
+// 📌 Endpoint pentru salvarea invitațiilor și trimiterea email-ului
 app.post("/api/confirmare", async (req, res) => {
     try {
         console.log("📩 Request primit:", req.body);
@@ -62,21 +63,33 @@ app.post("/api/confirmare", async (req, res) => {
 
         console.log("🛠️ Înainte de verificare:", { guestNames });
 
-        // 📌 Verificăm și curățăm `guestNames`
+        // Verificăm și curățăm `guestNames`
         if (!Array.isArray(guestNames) || guestNames.length === 0) {
             guestNames = ["Nespecificat"];
         } else {
-            guestNames = guestNames.filter(name => name.trim() !== ""); // Eliminăm numele goale
+            guestNames = guestNames.filter(name => name.trim() !== "");
         }
 
         console.log("✅ După verificare:", { guestNames });
+
+        // 📌 Verificăm datele înainte de salvare
+        console.log("📝 Date pregătite pentru salvare în MongoDB:", {
+            nume: fullName,
+            telefon: phoneNumber,
+            numar_persoane: numberOfGuests,
+            nume_invitati: guestNames,
+            numar_copii: numberOfChildren,
+            cazare: accommodation ? "Da" : "Nu",
+            preferinte: foodPreference,
+            comentarii: comments
+        });
 
         // 📌 Salvare în MongoDB
         const newInvite = new Invite({
             nume: fullName || "Anonim",
             telefon: phoneNumber || "N/A",
             numar_persoane: numberOfGuests || 1,
-            nume_invitati: Array.isArray(guestNames) ? guestNames : [], // 🔴 Forțăm salvarea ca array
+            nume_invitati: guestNames,
             numar_copii: numberOfChildren || 0,
             cazare: accommodation ? "Da" : "Nu",
             preferinte: foodPreference || "N/A",
@@ -89,7 +102,7 @@ app.post("/api/confirmare", async (req, res) => {
         // 📩 Trimitere e-mail
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: process.env.EMAIL_TO || process.env.EMAIL_USER, // Dacă nu există destinatari, trimite către tine
+            to: process.env.EMAIL_TO || process.env.EMAIL_USER, 
             subject: "Confirmare invitație nuntă",
             text: `
 Nume complet: ${fullName || "Anonim"}
