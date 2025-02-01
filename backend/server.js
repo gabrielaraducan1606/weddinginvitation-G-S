@@ -17,17 +17,18 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("✅ Conectat la MongoDB"))
     .catch(err => console.error("❌ Eroare la conectare:", err));
 
-// Definirea modelului de invitație
+// 📌 Definirea corectă a modelului de invitație (fără duplicare)
 const inviteSchema = new mongoose.Schema({
-    nume: String,
-    telefon: String,
-    numar_persoane: Number,
-    nume_invitati: [String],
-    numar_copii: Number,
-    cazare: String,
-    preferinte: String,
-    comentarii: String
+    nume: { type: String, required: true },
+    telefon: { type: String, required: true },
+    numar_persoane: { type: Number, required: true },
+    nume_invitati: { type: [String], default: [] },  // Corect: definim explicit ca array de stringuri
+    numar_copii: { type: Number, required: true },
+    cazare: { type: String, required: true },
+    preferinte: { type: String, required: true },
+    comentarii: { type: String, required: true }
 });
+
 const Invite = mongoose.model("Invite", inviteSchema);
 
 // Configurare Nodemailer
@@ -39,10 +40,10 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Endpoint pentru salvarea invitațiilor și trimiterea e-mailului
+// 📌 Endpoint corect pentru salvarea invitațiilor
 app.post("/api/confirmare", async (req, res) => {
     try {
-        console.log("📩 Request primit:", req.body); // Log pentru debugging
+        console.log("📩 Request primit:", req.body); // Debugging log
 
         let {
             fullName,
@@ -62,12 +63,12 @@ app.post("/api/confirmare", async (req, res) => {
         if (!Array.isArray(guestNames) || guestNames.length === 0) {
             guestNames = ["Nespecificat"];
         } else {
-            guestNames = guestNames.filter(name => name.trim() !== ""); // Elimină numele goale
+            guestNames = guestNames.filter(name => name.trim() !== ""); // Eliminăm numele goale
         }
 
         console.log("✅ După verificare:", { guestNames });
 
-        // Salvare în MongoDB
+        // 📌 Salvare în MongoDB
         const newInvite = new Invite({
             nume: fullName || "Anonim",
             telefon: phoneNumber || "N/A",
@@ -90,11 +91,7 @@ app.post("/api/confirmare", async (req, res) => {
     }
 });
 
-
-
-// Pornirea serverului
+// 📌 Pornirea serverului
 app.listen(PORT, () => {
     console.log(`🚀 Serverul rulează pe http://localhost:${PORT}`);
 });
-
-require("dotenv").config();
