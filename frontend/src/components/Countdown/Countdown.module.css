@@ -242,7 +242,7 @@ h2 {
 }
 
 .timeLabel {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 500;
   color: white;
   text-transform: uppercase;
@@ -313,7 +313,7 @@ h2 {
   }
 
   .timeLabel {
-    font-size: 1rem;
+    font-size: 0.7rem;
   }
 }
 
@@ -372,6 +372,6 @@ h2 {
   }
 
   .timeLabel {
-    font-size: 0.85rem;
+    font-size: 0.7rem;
   }
 }

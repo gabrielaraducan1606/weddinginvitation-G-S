@@ -197,18 +197,18 @@ h2 {
   }
 
   .loader {
-    font-size: 1.2rem;
+    font-size: 0.5rem;
   }
 
   .heart {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
   }
 
   .heart::before,
   .heart::after {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
   }
 }
 
@@ -239,13 +239,13 @@ h2 {
   }
 
   .heart {
-    width: 60px;
-    height: 60px;
+    width: 30px;
+    height: 30px;
   }
 
   .heart::before,
   .heart::after {
-    width: 60px;
-    height: 60px;
+    width: 30px;
+    height: 30px;
   }
 }
