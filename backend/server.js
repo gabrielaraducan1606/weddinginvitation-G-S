@@ -42,7 +42,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // 📌 Endpoint pentru salvarea invitațiilor și trimiterea email-ului
-app.post("https://wedding-gabriela-silviu.netlify.app/api/confirmare", async (req, res) => {
+app.post("/api/confirmare", async (req, res) => {
     try {
         console.log("📩 Request primit:", req.body);
 
