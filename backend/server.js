@@ -34,16 +34,11 @@ const Invite = mongoose.model("Invite", inviteSchema);
 
 // 📌 Configurare Nodemailer
 const transporter = nodemailer.createTransport({
-    host: "smtp.mail.com",   // Serverul SMTP pentru mail.com
-    port: 587,               // Portul standard pentru conexiuni TLS
-    secure: false,           // Folosește TLS, dar nu SSL
+    service: "gmail",
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     },
-    tls: {
-        rejectUnauthorized: false  // Permite certificatele auto-semnat pentru mail.com
-    }
 });
 
 // 📌 Endpoint pentru salvarea invitațiilor și trimiterea email-ului
